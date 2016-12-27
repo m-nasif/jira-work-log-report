@@ -1,0 +1,85 @@
+﻿.log-user-row {
+    background-color: #e0e0e0;
+}
+
+#report-config-panel .panel-body {
+    background-color: #eee;
+}
+
+table {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.report-config-item {
+    float: left;
+    margin-right: 20px;
+}
+
+.settings-dialog {
+    width: 80%;
+}
+
+.mdl-card.list-group-item {
+    width: 100%;
+    margin-bottom: 15px;
+    min-height: 0px;
+}
+
+    .mdl-card.list-group-item .mdl-textfield {
+        margin-right: 10px;
+        width: 200px;
+    }
+
+        .mdl-card.list-group-item .mdl-textfield label {
+            font-weight: bold;
+        }
+
+.config-save-alert {
+    font-weight: bold;
+    color: red;
+}
+
+.jira-api-call-progress {
+    width: 100%;
+}
+
+
+:hov .cls element.style {
+    word-wrap: break-word;
+    /* max-width: 50%; */
+    white-space: normal;
+}
+
+.mdl-data-table__cell--non-numeric.mdl-data-table__cell--non-numeric {
+    text-align: left;
+}
+
+.mdl-data-table td, .mdl-data-table td .mdl-data-table__select {
+    vertical-align: middle;
+}
+
+.mdl-data-table td {
+    position: relative;
+    height: 48px;
+    border-top: 1px solid rgba(0,0,0,.12);
+    border-bottom: 1px solid rgba(0,0,0,.12);
+    padding: 12px 18px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.mdl-data-table td {
+    text-align: right;
+}
+
+user agent stylesheet td, th {
+    display: table-cell;
+    vertical-align: inherit;
+}
+
+.mdl-data-table {
+    white-space: normal;
+}

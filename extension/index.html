@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="libs/material.min.css">
+    <script src="libs/material.min.js"></script>
+    <script src="libs/jquery-1.10.2.min.js"></script>
+    <script src="libs/underscore-min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="resources/styles.css" />
+    <script src="resources/util.js"></script>
+    <script src="resources/jira-api.js"></script>
+    <script src="resources/config.js"></script>
+    <script src="resources/report.js"></script>
+</head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <div class="report-config-panel">
+                    <div class="report-config-item">
+                        <label>Team:</label>
+                        <select class="option-team"></select>
+                    </div>
+                    <div class="report-config-item">
+                        <label>Time Frame:</label>
+                        <select class="option-time-frame">
+                            <option value="1WK">1 Week</option>
+                            <option value="1MO">1 Month</option>
+                        </select>
+                    </div>
+                    <div class="report-config-item">
+                        <label>Group By:</label>
+                        <select class="option-group-by">
+                            <option value="DT">Date</option>
+                            <option value="USR">User</option>
+                        </select>
+                    </div>
+                    <div class="report-config-item">
+                        <label>Date Sort:</label>
+                        <select class="option-date-sort">
+                            <option value="DSC">Descending</option>
+                            <option value="ASC">Ascending</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mdl-layout-spacer"></div>
+                <button class="mdl-button mdl-button--icon settings-button">
+                    <i class="material-icons">settings</i>
+                </button>
+            </div>
+        </header>
+        <main class="mdl-layout__content">
+            <div class="page-content report-page">
+                <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate jira-api-call-progress" style="display:none"></div>
+                <div class="report-content">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <dialog class="settings-dialog mdl-dialog">
+        <div class="mdl-dialog__content">
+            <h5>JIRA Connection Settings</h5>
+            <div class="config-page">
+                <div class="config-sections"></div>
+            </div>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button close">Close</button>
+        </div>
+    </dialog>
+
+    <script id="tmpl-config-section" type="text/x-underscore-template">
+        <div class="list-group">
+            <% for(var i=0; i < configs.length; i++){ %>
+            <div class="mdl-card mdl-shadow--4dp list-group-item" data-id="<%= configs[i].id %>">
+                <div class="mdl-card__supporting-text">
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <label>Name:</label>
+                        <input type="text" class="config-name mdl-textfield__input" placeholder="e.g. MyTeam" value="<%= configs[i].name %>" />
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <label>Host:</label>
+                        <input type="text" class="config-host mdl-textfield__input" placeholder="https://company.atlassian.net" value="<%= configs[i].host %>" />
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <label>Username:</label>
+                        <input type="text" class="config-username mdl-textfield__input" value="<%= configs[i].username %>" />
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <label>Password:</label>
+                        <input type="password" class="config-password mdl-textfield__input" value="<%= configs[i].password %>" />
+                    </div>
+                    <div class="config-save-alert" style="display:none">
+                    </div>
+                </div>
+                <div class="mdl-card__actions">
+                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect config-save"><%= configs[i].id != 0 ? "Save" : "Create New" %></button>
+                    <% if(configs[i].id != 0){ %>
+                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect config-delete">Delete</button>
+                    <% } %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </script>
+
+    <script id="tmpl-logs-by-user" type="text/x-underscore-template">
+        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+            <thead>
+                <tr>
+                    <th class="mdl-data-table__cell--non-numeric" rowspan="2">Date</th>
+                    <th rowspan="2">Logged Time</th>
+                    <th colspan="3">Log Entries</th>
+                </tr>
+                <tr>
+                    <th class="mdl-data-table__cell--non-numeric">Comment</th>
+                    <th>Time Spent</th>
+                    <th>Time Entered</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < reportData.length; i++) {
+                var logGroup = reportData[i];
+                %>
+                <tr class="log-user-row">
+                    <td colspan="6" class="mdl-data-table__cell--non-numeric"><%= logGroup.user.displayName %></td>
+                </tr>
+                <% for(var j=0; j < logGroup.logs.length; j++) {
+                var dailyLog = logGroup.logs[j];
+                var numLogs = dailyLog.logs.length;
+                %>
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric" rowspan="<%= numLogs %>"><%= Utility.getDateFormatted(dailyLog.date) %></td>
+                    <td rowspan="<%= numLogs %>"><%= Utility.getTimeFormatted(dailyLog.totalTime) %></td>
+                    <td class="mdl-data-table__cell--non-numeric"><%= dailyLog.logs[0].comment %></td>
+                    <td><%= dailyLog.logs[0].timeSpent %></td>
+                    <td><%= Utility.getDateFormatted(dailyLog.logs[0].created) %></td>
+                </tr>
+                <% for(var k=1; k < dailyLog.logs.length; k++) {
+                var log = dailyLog.logs[k];
+                %>
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric"><%= log.comment %></td>
+                    <td><%= log.timeSpent %></td>
+                    <td><%= Utility.getDateFormatted(log.created) %></td>
+                </tr>
+                <% } %>
+                <% } %>
+                <% }%>
+            </tbody>
+        </table>
+    </script>
+
+    <script id="tmpl-logs-by-date" type="text/x-underscore-template">
+        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="mdl-data-table__cell--non-numeric">User</th>
+                    <th rowspan="2">Logged Time</th>
+                    <th colspan="3">Log Entries</th>
+                </tr>
+                <tr>
+                    <th class="mdl-data-table__cell--non-numeric">Comment</th>
+                    <th>Time Spent</th>
+                    <th>Time Entered</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < reportData.length; i++) {
+                var logGroup = reportData[i];
+                %>
+                <tr class="log-user-row">
+                    <td class="mdl-data-table__cell--non-numeric" colspan="6"><%= Utility.getDateFormatted(logGroup.date) %></td>
+                </tr>
+                <% for(var j=0; j < logGroup.logs.length; j++) {
+                var userLog = logGroup.logs[j];
+                var numLogs = userLog.logs.length;
+                %>
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric" rowspan="<%= numLogs %>"><%= userLog.logs[0].author.displayName %></td>
+                    <td rowspan="<%= numLogs %>"><%= Utility.getTimeFormatted(userLog.totalTime) %></td>
+                    <td class="mdl-data-table__cell--non-numeric"><%= userLog.logs[0].comment %></td>
+                    <td><%= userLog.logs[0].timeSpent %></td>
+                    <td><%= Utility.getDateFormatted(userLog.logs[0].created) %></td>
+                </tr>
+                <% for(var k=1; k < userLog.logs.length; k++) {
+                var log = userLog.logs[k];
+                %>
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric"><%= log.comment %></td>
+                    <td><%= log.timeSpent %></td>
+                    <td><%= Utility.getDateFormatted(log.created) %></td>
+                </tr>
+                <% } %>
+                <% } %>
+                <% }%>
+            </tbody>
+        </table>
+    </script>
+</body>
+</html>
