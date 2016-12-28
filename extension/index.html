@@ -136,7 +136,7 @@
                 <tr class="log-header-row">
                     <td colspan="6" class="mdl-data-table__cell--non-numeric">
                         <img class="user-img" src="<%= users[logGroup.username].thumbUrl %>" />
-                        <span><%= users[logGroup.username].displayName %></span>
+                        <span class="group-title"><%= users[logGroup.username].displayName %></span>
                         <span>Total: <%= Utility.getTimeFormatted(logGroup.totalTime) %></span>
                     </td>
                 </tr>
@@ -189,7 +189,7 @@
                 %>
                 <tr class="log-header-row">
                     <td class="mdl-data-table__cell--non-numeric" colspan="6">
-                        <span><%= Utility.getDateFormatted(logGroup.date, true) %></span>
+                        <span class="group-title"><%= Utility.getDateFormatted(logGroup.date, true) %></span>
                         <span>Total: <%= Utility.getTimeFormatted(logGroup.totalTime) %></span>
                     </td>
                 </tr>

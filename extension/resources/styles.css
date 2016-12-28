@@ -20,7 +20,7 @@ table {
         vertical-align: middle;
     }
 
-        .log-header-row span:first-child {
+        .log-header-row span.group-title {
             margin-right: 40px;
             font-weight: bold;
         }
