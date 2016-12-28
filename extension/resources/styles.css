@@ -3,6 +3,7 @@ table {
     width: 95%;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 40px;
 }
 
 .mdl-data-table tbody tr:hover {
@@ -110,4 +111,8 @@ table {
     white-space: normal;
     background-color: rgba(63, 81, 181, .92);
     box-shadow: 1px 1px 10px 2px rgba(255,255,255,0.5);
+}
+
+a {
+    color: #3f51b5;
 }

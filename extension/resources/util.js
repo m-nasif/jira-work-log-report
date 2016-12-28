@@ -47,7 +47,8 @@
     getIssue: function (log) {
         if (Report.data.issues && Report.data.issues[log.issueId]) {
             var issue = Report.data.issues[log.issueId];
-            return "<span class='mdl-chip' id='log" + log.id + "'><span class='mdl-chip__text'>" + issue.key + "</span></span>"
+            var jiraLink = JIRA.config.host + "/browse/" + issue.key;
+            return "<span class='mdl-chip' id='log" + log.id + "'><a target='_blank' href='" + jiraLink + "' class='mdl-chip__text'>" + issue.key + "</a></span>"
                     + "<div class='mdl-tooltip mdl-tooltip--large' data-mdl-for='log" + log.id + "'>" + issue.summary + "</div>";
         }
 
