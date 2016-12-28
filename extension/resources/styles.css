@@ -11,8 +11,7 @@ table {
 }
 
 .log-header-row, .mdl-data-table tbody tr.log-header-row:hover {
-    background-color: #3f51b5;
-    color: white;
+    background: linear-gradient(to bottom, #193984 0%,#ffffff 25%,#ffffff 95%,#193984 100%);
 }
 
     .log-header-row span {
@@ -61,6 +60,7 @@ table {
 /* Style for header */
 .mdl-layout__header {
     min-height: 46px;
+    background-color: #193984;
 }
 
 .mdl-layout__header-row {
@@ -109,10 +109,10 @@ table {
 
 .mdl-tooltip {
     white-space: normal;
-    background-color: rgba(63, 81, 181, .92);
+    background-color: rgba(25, 57, 132, .92);
     box-shadow: 1px 1px 10px 2px rgba(255,255,255,0.5);
 }
 
 a {
-    color: #3f51b5;
+    color: #193984;
 }
