@@ -65,12 +65,11 @@
             Report.getLogsGroupedByUser(logs, renderConfig) :
             Report.getLogsGroupedByDate(logs, renderConfig);
 
-        console.log(reportData);
-
         var templateId = renderConfig.groupBy == "DT" ? "#tmpl-logs-by-date" : "#tmpl-logs-by-user";
         var template = _.template($(templateId).html());
 
         $('.report-content').html(template({ data: reportData, users: Report.data.usersByName }));
+        componentHandler.upgradeAllRegistered();
     },
     selectionChanged: function ($item) {
         if ($item.hasClass('option-team')) {
@@ -138,7 +137,8 @@
             Report.data = {
                 logs: data.logs,
                 users: data.users,
-                usersByName: _.indexBy(data.users, 'name')
+                usersByName: _.indexBy(data.users, 'name'),
+                issues: data.issues
             }
             Report.renderUserSelect();
             Report.renderLogs();

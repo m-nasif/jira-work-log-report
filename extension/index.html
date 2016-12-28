@@ -120,9 +120,10 @@
                 <tr>
                     <th class="mdl-data-table__cell--non-numeric" rowspan="2">Date</th>
                     <th rowspan="2">Logged Time</th>
-                    <th colspan="3">Log Entries</th>
+                    <th colspan="4">Log Entries</th>
                 </tr>
                 <tr>
+                    <th class="mdl-data-table__cell--non-numeric">Issue</th>
                     <th class="mdl-data-table__cell--non-numeric">Comment</th>
                     <th>Time Spent</th>
                     <th>Time Entered</th>
@@ -146,6 +147,7 @@
                 <tr>
                     <td class="mdl-data-table__cell--non-numeric" rowspan="<%= numLogs %>"><%= Utility.getDateFormatted(dailyLog.date) %></td>
                     <td rowspan="<%= numLogs %>"><%= Utility.getTimeFormatted(dailyLog.totalTime) %></td>
+                    <td class="mdl-data-table__cell--non-numeric"><%= Utility.getIssue(dailyLog.logs[0]) %></td>
                     <td class="mdl-data-table__cell--non-numeric comment-col"><%= dailyLog.logs[0].comment %></td>
                     <td><%= Utility.getTimeFormatted(dailyLog.logs[0].time) %></td>
                     <td><%= Utility.getDateFormatted(dailyLog.logs[0].created) %></td>
@@ -154,6 +156,7 @@
                 var log = dailyLog.logs[k];
                 %>
                 <tr>
+                    <td class="mdl-data-table__cell--non-numeric"><%= Utility.getIssue(log) %></td>
                     <td class="mdl-data-table__cell--non-numeric comment-col"><%= log.comment %></td>
                     <td><%= Utility.getTimeFormatted(log.time) %></td>
                     <td><%= Utility.getDateFormatted(log.created) %></td>
@@ -171,9 +174,10 @@
                 <tr>
                     <th rowspan="2" class="mdl-data-table__cell--non-numeric">User</th>
                     <th rowspan="2">Logged Time</th>
-                    <th colspan="3">Log Entries</th>
+                    <th colspan="4">Log Entries</th>
                 </tr>
                 <tr>
+                    <th class="mdl-data-table__cell--non-numeric">Issue</th>
                     <th class="mdl-data-table__cell--non-numeric">Comment</th>
                     <th>Time Spent</th>
                     <th>Time Entered</th>
@@ -199,6 +203,7 @@
                         <span><%= users[userLog.username].displayName %></span>
                     </td>
                     <td rowspan="<%= numLogs %>"><%= Utility.getTimeFormatted(userLog.totalTime) %></td>
+                    <td class="mdl-data-table__cell--non-numeric"><%= Utility.getIssue(userLog.logs[0]) %></td>
                     <td class="mdl-data-table__cell--non-numeric comment-col"><%= userLog.logs[0].comment %></td>
                     <td><%= Utility.getTimeFormatted(userLog.logs[0].time) %></td>
                     <td><%= Utility.getDateFormatted(userLog.logs[0].created) %></td>
@@ -207,6 +212,7 @@
                 var log = userLog.logs[k];
                 %>
                 <tr>
+                    <td class="mdl-data-table__cell--non-numeric"><%= Utility.getIssue(log) %></td>
                     <td class="mdl-data-table__cell--non-numeric comment-col"><%= log.comment %></td>
                     <td><%= Utility.getTimeFormatted(log.time) %></td>
                     <td><%= Utility.getDateFormatted(log.created) %></td>

@@ -43,5 +43,14 @@
         return _.reduce(arr, function (sum, elem) {
             return sum + elem[prop];
         }, 0);
+    },
+    getIssue: function (log) {
+        if (Report.data.issues && Report.data.issues[log.issueId]) {
+            var issue = Report.data.issues[log.issueId];
+            return "<span class='mdl-chip' id='log" + log.id + "'><span class='mdl-chip__text'>" + issue.key + "</span></span>"
+                    + "<div class='mdl-tooltip mdl-tooltip--large' data-mdl-for='log" + log.id + "'>" + issue.summary + "</div>";
+        }
+
+        return "";
     }
 }

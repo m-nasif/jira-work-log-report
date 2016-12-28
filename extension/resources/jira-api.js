@@ -43,7 +43,7 @@ JIRA.getWorkLogs = function (fromDate) {
         }
 
         if (ids.length == 0) {
-            deferred.resolve({ users: [], logs: [] });
+            deferred.resolve({ users: [], logs: [], issues: null });
         }
 
         JIRA.restCall('worklog/list', 'POST', { "ids": ids }).done(function (logs) {
@@ -67,11 +67,35 @@ JIRA.getWorkLogs = function (fromDate) {
                     time: log.timeSpentSeconds,
                     comment: log.comment,
                     created: log.created,
-                    issueId: log.issueId
+                    issueId: log.issueId,
+                    id: log.id
                 };
             });
 
-            deferred.resolve({ users: users, logs: cleanedLogs });
+            //Get JIRA Issues
+            var issueIds = _.uniq(_.pluck(logs, 'issueId'));
+            var request = {
+                "jql": "id in (" + issueIds.join(',') + ")",
+                "startAt": 0,
+                "maxResults": 1000,
+                "fields": [
+                    "summary",
+                    "key"
+                ],
+                "fieldsByKeys": false
+            };
+
+            JIRA.restCall('search', 'POST', request).done(function (jiraIssues) {
+                var issues = {};
+
+                _.each(jiraIssues.issues, function (issue) {
+                    issues[issue.id] = { key: issue.key, summary: issue.fields.summary };
+                });
+
+                deferred.resolve({ users: users, logs: cleanedLogs, issues: issues });
+            }).fail(function (message) {
+                deferred.resolve({ users: users, logs: cleanedLogs, issues: null });
+            });
         }).fail(function (message) {
             deferred.reject(message);
         });

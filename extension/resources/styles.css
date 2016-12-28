@@ -1,43 +1,43 @@
-﻿.log-header-row {
-    background-color: #3f51b5;
-    color: white;
-}
-
-.mdl-data-table tbody tr.log-header-row:hover {
-    background-color: #3f51b5;
-    color: white;
-}
-
-.log-header-row span {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-    .log-header-row span:first-child {
-        margin-right: 40px;
-        font-weight: bold;
-    }
-
-.user-img {
-    width: 48px;
-    height: 48px;
-}
-
-#report-config-panel .panel-body {
-    background-color: #eee;
-}
-
+﻿/* Styel for table */
 table {
     width: 95%;
     margin-left: auto;
     margin-right: auto;
 }
 
-.report-config-item {
-    float: left;
-    margin-right: 20px;
+.mdl-data-table tbody tr:hover {
+    background-color: initial;
 }
 
+.log-header-row, .mdl-data-table tbody tr.log-header-row:hover {
+    background-color: #3f51b5;
+    color: white;
+}
+
+    .log-header-row span {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+        .log-header-row span:first-child {
+            margin-right: 40px;
+            font-weight: bold;
+        }
+
+.mdl-data-table .comment-col {
+    white-space: pre-wrap;
+}
+
+.mdl-data-table td:first-of-type, .mdl-data-table th:first-of-type {
+    padding-left: 18px;
+}
+
+.user-img {
+    width: 48px;
+    height: 48px;
+}
+
+/* Style for settings dialog and content */
 .settings-dialog {
     width: 80%;
 }
@@ -57,6 +57,46 @@ table {
             font-weight: bold;
         }
 
+/* Style for header */
+.mdl-layout__header {
+    min-height: 46px;
+}
+
+.mdl-layout__header-row {
+    height: 46px;
+}
+
+.report-config-item {
+    float: left;
+    margin-right: 20px;
+}
+
+/* Style for multi-select */
+.option-users {
+    height: 21px;
+    width: 200px;
+}
+
+.mdl-layout__header .SumoSelect {
+    color: #000;
+}
+
+.team-users > * {
+    vertical-align: middle;
+}
+
+.team-users > label {
+    margin-right: 4px;
+}
+
+.SumoSelect p {
+    font-size: inherit;
+    font-weight: initial;
+    line-height: initial;
+    padding: 1px 5px;
+}
+
+/* Misc. */
 .config-save-alert {
     font-weight: bold;
     color: red;
@@ -66,71 +106,8 @@ table {
     width: 100%;
 }
 
-
-:hov .cls element.style {
-    word-wrap: break-word;
-    /* max-width: 50%; */
+.mdl-tooltip {
     white-space: normal;
-}
-
-.mdl-data-table__cell--non-numeric.mdl-data-table__cell--non-numeric {
-    text-align: left;
-}
-
-.mdl-data-table td, .mdl-data-table td .mdl-data-table__select {
-    vertical-align: middle;
-}
-
-.mdl-data-table td {
-    word-wrap: break-word;
-    word-break: break-all;
-}
-
-.mdl-data-table td {
-    text-align: right;
-}
-
-user agent stylesheet td, th {
-    display: table-cell;
-    vertical-align: inherit;
-}
-
-.mdl-data-table .comment-col {
-    white-space: pre-wrap;
-}
-
-.mdl-data-table td:first-of-type, .mdl-data-table th:first-of-type {
-    padding-left: 18px;
-}
-
-.mdl-layout__header {
-    min-height: 46px;
-}
-
-.mdl-layout__header-row {
-    height: 46px;
-}
-
-.mdl-layout__header .SumoSelect {
-    color: #000;
-}
-
-.team-users {
-    display: flex;
-}
-
-    .team-users > label {
-        margin-right: 4px;
-    }
-
-.SumoSelect p {
-    font-size: inherit;
-    font-weight: initial;
-    line-height: initial;
-    padding: 1px 5px;
-}
-
-.option-users {
-    height: 21px;
-    width: 200px;
+    background-color: rgba(63, 81, 181, .92);
+    box-shadow: 1px 1px 10px 2px rgba(255,255,255,0.5);
 }
