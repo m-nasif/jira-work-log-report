@@ -11,7 +11,7 @@ table {
 }
 
 .log-header-row, .mdl-data-table tbody tr.log-header-row:hover {
-    background: linear-gradient(to bottom, #193984 0%,#ffffff 25%,#ffffff 95%,#193984 100%);
+    background: linear-gradient(to bottom, #193984 0%,#ffffff 20%,#ffffff 98%,#193984 100%);
 }
 
     .log-header-row span {
@@ -110,7 +110,7 @@ table {
 .mdl-tooltip {
     white-space: normal;
     background-color: rgba(25, 57, 132, .92);
-    box-shadow: 1px 1px 10px 2px rgba(255,255,255,0.5);
+    box-shadow: 1px 1px 10px 2px rgba(0,0,0,0.5);
 }
 
 a {
