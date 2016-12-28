@@ -9,19 +9,22 @@
     },
     getfilteredLogs: function (config) {
         var startDate = config.timeFrame == '1WK' ? Utility.getWeekStartDate() : Utility.getMonthStartDate();
-        return _.filter(Report.data.logs, function (log) { return log.date >= startDate; });
+        var selectedUsers = Configuration.getUserSelection(window.localStorage.getItem('selected_team_id'));
+        return _.filter(Report.data.logs, function (log) {
+            return log.date >= startDate && (selectedUsers == null || _.indexOf(selectedUsers, log.username) > -1);
+        });
     },
     getLogsGroupedByUser(logs, config) {
         var reportData = [];
-        var logsGroupByUser = _.groupBy(logs, function (log) { return log.author.name; });
-        _.each(logsGroupByUser, function (grp, key) {
+        var logsGroupByUser = _.groupBy(logs, function (log) { return log.username; });
+        _.each(logsGroupByUser, function (grp, username) {
             var groupedByDays = _.groupBy(grp, function (log) { return log.date; });
-            var groupedByDayLogs = _.sortBy(_.map(groupedByDays, function (logArray, key) {
+            var groupedByDayLogs = _.sortBy(_.map(groupedByDays, function (logArray, date) {
                 return {
-                    date: new Date(key),
+                    date: new Date(date),
                     logs: logArray,
                     totalTime: _.reduce(logArray, function (sum, log) {
-                        return sum + log.timeSpentSeconds;
+                        return sum + log.time;
                     }, 0)
                 };
             }), function (log) {
@@ -29,28 +32,29 @@
                 return config.dateSort == "DSC" ? -1 * time : time;
             });
 
-            reportData.push({ user: grp[0].author, logs: groupedByDayLogs });
+            reportData.push({ username: username, logs: groupedByDayLogs });
         });
 
-        return _.sortBy(reportData, function (dt) { return dt.user.displayName });
+        return _.sortBy(reportData, function (dt) { return Report.data.usersByName[dt.username].displayName; });
     },
     getLogsGroupedByDate(logs, config) {
         var reportData = [];
         var logsGroupByDate = _.groupBy(logs, function (log) { return log.date; });
-        _.each(logsGroupByDate, function (grp, key) {
-            var groupedByUser = _.groupBy(grp, function (log) { return log.author.name; });
+        _.each(logsGroupByDate, function (grp, date) {
+            var groupedByUser = _.groupBy(grp, function (log) { return log.username; });
             var groupedByUserLogs = _.sortBy(_.map(groupedByUser, function (logArray, username) {
                 return {
+                    username: username,
                     logs: logArray,
                     totalTime: _.reduce(logArray, function (sum, log) {
-                        return sum + log.timeSpentSeconds;
+                        return sum + log.time;
                     }, 0)
                 };
             }), function (log) {
-                return log.logs[0].author.displayName;
+                return Report.data.usersByName[log.username].displayName;;
             });
 
-            reportData.push({ date: new Date(key), logs: groupedByUserLogs });
+            reportData.push({ date: new Date(date), logs: groupedByUserLogs });
         });
 
         return _.sortBy(reportData, function (dt) {
@@ -70,15 +74,36 @@
         var templateId = renderConfig.groupBy == "DT" ? "#tmpl-logs-by-date" : "#tmpl-logs-by-user";
         var template = _.template($(templateId).html());
 
-        $('.report-content').html(template({ reportData: reportData }));
+        $('.report-content').html(template({ data: reportData, users: Report.data.usersByName }));
     },
     selectionChanged: function ($item) {
         if ($item.hasClass('option-team')) {
             window.localStorage.setItem('selected_team_id', $item.val());
             Report.renderPage();
-        } else {
+        } else if ($item.hasClass('option-users')) {
+            var currentSelection = $('.option-users option').map(function (i, elem) { return { name: $(elem).val(), selected: $(elem).prop('selected') }; });
+            Configuration.saveUserSelection(window.localStorage.getItem('selected_team_id'), currentSelection);
             Report.renderLogs();
         }
+        else {
+            Report.renderLogs();
+        }
+    },
+    renderUserSelect: function () {
+        $optionUsers = $('.option-users');
+        if ($optionUsers[0].sumo) {
+            $optionUsers[0].sumo.unload();
+            $optionUsers.empty();
+        }
+
+        var selectedUsers = Configuration.getUserSelection(window.localStorage.getItem('selected_team_id')) || [];
+
+        _.each(Report.data.users, function (user) {
+            var selected = _.indexOf(selectedUsers, user.name) == -1 ? '' : ' selected="selected"';
+            $optionUsers.append('<option value="' + user.name + '"' + selected + '>' + user.displayName + '</option>');
+        });
+
+        $optionUsers.SumoSelect({ selectAll: true }); // { selectAll: Report.data.users.length > 1 }
     },
     renderPage: function () {
         var jiraConfigs = Configuration.getConfigs();
@@ -110,12 +135,24 @@
 
         var fromDate = Utility.getMonthStartDate();
         JIRA.config = selectedTeam;
-        JIRA.getWorkLogs(fromDate).done(function (logs) {
+        JIRA.getWorkLogs(fromDate).done(function (data) {
             $('.jira-api-call-progress').hide();
-            _.each(logs, function (log) { log.date = Utility.getDate(log.started); });
-            Report.data.logs = logs;
-            Report.data.users = _.map(_.groupBy(logs, function (log) { return log.author.name; }), function (grp) { return grp[0].author });
+            $(".report-config-item").show();
+
+            Report.data = {
+                logs: data.logs,
+                users: data.users,
+                usersByName: _.indexBy(data.users, 'name')
+            }
+            Report.renderUserSelect();
             Report.renderLogs();
+        }).fail(function (errorText) {
+            $('.jira-api-call-progress').hide();
+            $(".report-config-item:not(:first-child)").hide();
+            $('.report-content').html('<p>Failed to retrieve data from JIRA API. Please check JIRA connection configuration and try again.</p>');
+            if (errorText) {
+                $('.report-content p').append('<br>' + errorText);
+            }
         });
     }
 };

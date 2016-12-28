@@ -80,6 +80,42 @@ user agent stylesheet td, th {
     vertical-align: inherit;
 }
 
-.mdl-data-table {
-    white-space: normal;
+.mdl-data-table .comment-col {
+    white-space: pre-wrap;
+}
+
+.mdl-data-table td:first-of-type, .mdl-data-table th:first-of-type {
+    padding-left: 18px;
+}
+
+.mdl-layout__header {
+    min-height: 46px;
+}
+
+.mdl-layout__header-row {
+    height: 46px;
+}
+
+.mdl-layout__header .SumoSelect {
+    color: #000;
+}
+
+.team-users {
+    display: flex;
+}
+
+    .team-users > label {
+        margin-right: 4px;
+    }
+
+.SumoSelect p {
+    font-size: inherit;
+    font-weight: initial;
+    line-height: initial;
+    padding: 1px 5px;
+}
+
+.option-users {
+    height: 21px;
+    width: 200px;
 }

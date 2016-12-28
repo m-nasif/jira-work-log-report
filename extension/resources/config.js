@@ -1,4 +1,21 @@
 ﻿var Configuration = {
+    saveUserSelection: function (teamId, currentSelection) {
+        var savedSelections = Configuration.getUserSelection(teamId) || [];
+
+        var allUsers = _.pluck(currentSelection, 'name');
+        var selectedUsers = _.pluck(_.where(currentSelection, { selected: true }), 'name');
+
+        savedSelections = _.union(selectedUsers, _.difference(savedSelections, allUsers));
+        window.localStorage.setItem('user-selection-team-' + teamId, JSON.stringify(savedSelections));
+    },
+    getUserSelection: function (teamId) {
+        var configs = window.localStorage.getItem('user-selection-team-' + teamId);
+        if (configs) {
+            return JSON.parse(configs);
+        } else {
+            return null;
+        }
+    },
     persistConfig: function (config) {
         var configs = Configuration.getConfigs();
         if (config.id == 0) {
@@ -16,6 +33,7 @@
         var configs = Configuration.getConfigs();
         configs = _.reject(configs, function (c) { return c.id == id; });
         window.localStorage.setItem('host-configs', JSON.stringify(configs));
+        window.localStorage.removeItem('user-selection-team-' + id);
         Configuration.renderContent();
     },
     getConfigs: function () {

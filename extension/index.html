@@ -2,16 +2,19 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="libs/material.min.css">
+    <link rel="stylesheet" href="libs/material.min.css" />
+    <link rel="stylesheet" href="libs/sumoselect.css" />
     <script src="libs/material.min.js"></script>
     <script src="libs/jquery-1.10.2.min.js"></script>
+    <script src="libs/jquery.sumoselect.min.js"></script>
     <script src="libs/underscore-min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <link rel="stylesheet" href="resources/styles.css" />
     <script src="resources/util.js"></script>
     <script src="resources/jira-api.js"></script>
     <script src="resources/config.js"></script>
     <script src="resources/report.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
@@ -21,6 +24,10 @@
                     <div class="report-config-item">
                         <label>Team:</label>
                         <select class="option-team"></select>
+                    </div>
+                    <div class="report-config-item team-users">
+                        <label>Users:</label>
+                        <select class="option-users" multiple="multiple"></select>
                     </div>
                     <div class="report-config-item">
                         <label>Time Frame:</label>
@@ -121,11 +128,11 @@
                 </tr>
             </thead>
             <tbody>
-                <% for(var i=0; i < reportData.length; i++) {
-                var logGroup = reportData[i];
+                <% for(var i=0; i < data.length; i++) {
+                var logGroup = data[i];
                 %>
                 <tr class="log-user-row">
-                    <td colspan="6" class="mdl-data-table__cell--non-numeric"><%= logGroup.user.displayName %></td>
+                    <td colspan="6" class="mdl-data-table__cell--non-numeric"><%= users[logGroup.username].displayName %></td>
                 </tr>
                 <% for(var j=0; j < logGroup.logs.length; j++) {
                 var dailyLog = logGroup.logs[j];
@@ -134,16 +141,16 @@
                 <tr>
                     <td class="mdl-data-table__cell--non-numeric" rowspan="<%= numLogs %>"><%= Utility.getDateFormatted(dailyLog.date) %></td>
                     <td rowspan="<%= numLogs %>"><%= Utility.getTimeFormatted(dailyLog.totalTime) %></td>
-                    <td class="mdl-data-table__cell--non-numeric"><%= dailyLog.logs[0].comment %></td>
-                    <td><%= dailyLog.logs[0].timeSpent %></td>
+                    <td class="mdl-data-table__cell--non-numeric comment-col"><%= dailyLog.logs[0].comment %></td>
+                    <td><%= Utility.getTimeFormatted(dailyLog.logs[0].time) %></td>
                     <td><%= Utility.getDateFormatted(dailyLog.logs[0].created) %></td>
                 </tr>
                 <% for(var k=1; k < dailyLog.logs.length; k++) {
                 var log = dailyLog.logs[k];
                 %>
                 <tr>
-                    <td class="mdl-data-table__cell--non-numeric"><%= log.comment %></td>
-                    <td><%= log.timeSpent %></td>
+                    <td class="mdl-data-table__cell--non-numeric comment-col"><%= log.comment %></td>
+                    <td><%= Utility.getTimeFormatted(log.time) %></td>
                     <td><%= Utility.getDateFormatted(log.created) %></td>
                 </tr>
                 <% } %>
@@ -168,8 +175,8 @@
                 </tr>
             </thead>
             <tbody>
-                <% for(var i=0; i < reportData.length; i++) {
-                var logGroup = reportData[i];
+                <% for(var i=0; i < data.length; i++) {
+                var logGroup = data[i];
                 %>
                 <tr class="log-user-row">
                     <td class="mdl-data-table__cell--non-numeric" colspan="6"><%= Utility.getDateFormatted(logGroup.date) %></td>
@@ -179,18 +186,18 @@
                 var numLogs = userLog.logs.length;
                 %>
                 <tr>
-                    <td class="mdl-data-table__cell--non-numeric" rowspan="<%= numLogs %>"><%= userLog.logs[0].author.displayName %></td>
+                    <td class="mdl-data-table__cell--non-numeric" rowspan="<%= numLogs %>"><%= users[userLog.username].displayName %></td>
                     <td rowspan="<%= numLogs %>"><%= Utility.getTimeFormatted(userLog.totalTime) %></td>
-                    <td class="mdl-data-table__cell--non-numeric"><%= userLog.logs[0].comment %></td>
-                    <td><%= userLog.logs[0].timeSpent %></td>
+                    <td class="mdl-data-table__cell--non-numeric comment-col"><%= userLog.logs[0].comment %></td>
+                    <td><%= Utility.getTimeFormatted(userLog.logs[0].time) %></td>
                     <td><%= Utility.getDateFormatted(userLog.logs[0].created) %></td>
                 </tr>
                 <% for(var k=1; k < userLog.logs.length; k++) {
                 var log = userLog.logs[k];
                 %>
                 <tr>
-                    <td class="mdl-data-table__cell--non-numeric"><%= log.comment %></td>
-                    <td><%= log.timeSpent %></td>
+                    <td class="mdl-data-table__cell--non-numeric comment-col"><%= log.comment %></td>
+                    <td><%= Utility.getTimeFormatted(log.time) %></td>
                     <td><%= Utility.getDateFormatted(log.created) %></td>
                 </tr>
                 <% } %>

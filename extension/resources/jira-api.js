@@ -19,6 +19,7 @@ JIRA.restCall = function (apiUrl, method, data) {
     };
 
     request.type = method == "POST" ? "POST" : "GET";
+
     if (data) {
         request.data = JSON.stringify(data);
     }
@@ -26,8 +27,7 @@ JIRA.restCall = function (apiUrl, method, data) {
     $.ajax(request).done(function (data) {
         deferred.resolve(data);
     }).fail(function (error) {
-        alert(error.statusText);
-        deferred.reject();
+        deferred.reject(error.statusText);
     });
 
     return deferred.promise();
@@ -43,11 +43,35 @@ JIRA.getWorkLogs = function (fromDate) {
         }
 
         if (ids.length == 0) {
-            deferred.resolve([]);
+            deferred.resolve({ users: [], logs: [] });
         }
 
         JIRA.restCall('worklog/list', 'POST', { "ids": ids }).done(function (logs) {
-            deferred.resolve(logs);
+            var users = _.map(_.groupBy(logs, function (log) { return log.author.name; }), function (grp) {
+                var user = grp[0].author;
+                return {
+                    name: user.name,
+                    displayName: user.displayName,
+                    email: user.emailAddress,
+                    thumbUrl: (user.avatarUrls && user.avatarUrls["48x48"]) ? user.avatarUrls["48x48"] : ''
+                }
+            });
+
+            var cleanedLogs = _.each(logs, function (log) { log.date = Utility.getDate(log.started); });
+
+            var cleanedLogs = _.map(logs, function (log) {
+                return {
+                    date: Utility.getDate(log.started),
+                    username: log.author.name,
+                    userDisplayName: log.author.displayName,
+                    time: log.timeSpentSeconds,
+                    comment: log.comment,
+                    created: log.created,
+                    issueId: log.issueId
+                };
+            });
+
+            deferred.resolve({ users: users, logs: cleanedLogs });
         }).fail(function (message) {
             deferred.reject(message);
         });
