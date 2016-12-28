@@ -4,10 +4,10 @@
         var dt = new Date(dateString);
         return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
     },
-    getDateFormatted: function (dateString) {
+    getDateFormatted: function (dateString, showWeekday) {
         var dt = new Date(dateString);
         return dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2)
-            + '<br>' + Utility.days[dt.getDay()];
+            + (showWeekday ? '<br>' + Utility.days[dt.getDay()] : '');
     },
     getTimeFormatted(timeInSecond) {
         var display = "";
@@ -38,5 +38,10 @@
     getMonthStartDate: function () {
         var today = Utility.getDate(new Date());
         return new Date(today.getTime() - 29 * 24 * 3600000);
+    },
+    sum: function (arr, prop) {
+        return _.reduce(arr, function (sum, elem) {
+            return sum + elem[prop];
+        }, 0);
     }
 }

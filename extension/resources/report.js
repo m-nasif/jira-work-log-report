@@ -23,16 +23,14 @@
                 return {
                     date: new Date(date),
                     logs: logArray,
-                    totalTime: _.reduce(logArray, function (sum, log) {
-                        return sum + log.time;
-                    }, 0)
+                    totalTime: Utility.sum(logArray, 'time')
                 };
             }), function (log) {
                 var time = log.date.getTime();
                 return config.dateSort == "DSC" ? -1 * time : time;
             });
 
-            reportData.push({ username: username, logs: groupedByDayLogs });
+            reportData.push({ username: username, logs: groupedByDayLogs, totalTime: Utility.sum(groupedByDayLogs, 'totalTime') });
         });
 
         return _.sortBy(reportData, function (dt) { return Report.data.usersByName[dt.username].displayName; });
@@ -46,15 +44,13 @@
                 return {
                     username: username,
                     logs: logArray,
-                    totalTime: _.reduce(logArray, function (sum, log) {
-                        return sum + log.time;
-                    }, 0)
+                    totalTime: Utility.sum(logArray, 'time')
                 };
             }), function (log) {
                 return Report.data.usersByName[log.username].displayName;;
             });
 
-            reportData.push({ date: new Date(date), logs: groupedByUserLogs });
+            reportData.push({ date: new Date(date), logs: groupedByUserLogs, totalTime: Utility.sum(groupedByUserLogs, 'totalTime') });
         });
 
         return _.sortBy(reportData, function (dt) {
