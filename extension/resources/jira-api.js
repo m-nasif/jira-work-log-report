@@ -1,5 +1,6 @@
 ﻿var JIRA = {
-    config: { host: '', username: '', password: '' }
+    config: { host: '', username: '', password: '' },
+    const: { MAX_SEARCH_RESULTS: 100 }
 };
 
 JIRA.restCall = function (apiUrl, method, data) {
@@ -75,9 +76,8 @@ JIRA.getWorkLogs = function (fromDate) {
             //Get JIRA Issues
             var issueIds = _.uniq(_.pluck(logs, 'issueId'));
             var request = {
-                "jql": "id in (" + issueIds.join(',') + ")",
-                "startAt": 0,
-                "maxResults": 1000,
+                "jql": "id in (" + issueIds.join(',') + ") order by key DESC",
+                "maxResults": JIRA.const.MAX_SEARCH_RESULTS,
                 "fields": [
                     "summary",
                     "key"
@@ -85,10 +85,28 @@ JIRA.getWorkLogs = function (fromDate) {
                 "fieldsByKeys": false
             };
 
-            JIRA.restCall('search', 'POST', request).done(function (jiraIssues) {
+            function getIssuesPaginated(def, currResult) {
+                var currRequest = Object.assign({startAt: currResult.length}, request);
+                JIRA.restCall('search', 'POST', currRequest).done(function (resp) {
+                    currResult = currResult.concat(resp.issues);
+
+                    if(resp.startAt + resp.issues.length >= resp.total) {
+                        def.resolve(currResult);
+                    } else {
+                        getIssuesPaginated(def, currResult);
+                    }
+                }).fail(function (message) {
+                    def.reject(message);
+                });
+            }
+
+            var issueDeferred = $.Deferred();
+            getIssuesPaginated(issueDeferred, []);
+
+            issueDeferred.done(function (jiraIssues) {
                 var issues = {};
 
-                _.each(jiraIssues.issues, function (issue) {
+                _.each(jiraIssues, function (issue) {
                     issues[issue.id] = { key: issue.key, summary: issue.fields.summary };
                 });
 

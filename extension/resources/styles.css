@@ -53,6 +53,10 @@ table {
         width: 200px;
     }
 
+    .mdl-card.list-group-item .mdl-textfield.config-host-container {
+        width: 300px;
+    }
+
         .mdl-card.list-group-item .mdl-textfield label {
             font-weight: bold;
         }
