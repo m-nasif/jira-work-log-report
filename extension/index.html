@@ -70,6 +70,9 @@
     <dialog class="settings-dialog mdl-dialog">
         <div class="mdl-dialog__content">
             <h5>JIRA Connection Settings</h5>
+            <p>For the API Token field, please create API token from 
+                <a href="https://id.atlassian.com/manage/api-tokens" target="_blank">https://id.atlassian.com/manage/api-tokens</a>
+                and use the token value in that field.</p>
             <div class="config-page">
                 <div class="config-sections"></div>
             </div>
@@ -93,18 +96,18 @@
                         <input type="text" class="config-host mdl-textfield__input" placeholder="https://company.atlassian.net" value="<%= configs[i].host %>" />
                     </div>
                     <div class="mdl-textfield mdl-js-textfield">
-                        <label>Username:</label>
+                        <label>Email:</label>
                         <input type="text" class="config-username mdl-textfield__input" value="<%= configs[i].username %>" />
                     </div>
                     <div class="mdl-textfield mdl-js-textfield">
-                        <label>Password:</label>
+                        <label>API Token:</label>
                         <input type="password" class="config-password mdl-textfield__input" value="<%= configs[i].password %>" />
                     </div>
                     <div class="config-save-alert" style="display:none">
                     </div>
                 </div>
                 <div class="mdl-card__actions">
-                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect config-save"><%= configs[i].id != 0 ? "Save" : "Create New" %></button>
+                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect config-save"><%= configs[i].id != 0 ? "Update" : "Create" %></button>
                     <% if(configs[i].id != 0){ %>
                     <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect config-delete">Delete</button>
                     <% } %>
